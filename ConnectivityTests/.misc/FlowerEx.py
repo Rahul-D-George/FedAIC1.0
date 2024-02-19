@@ -19,14 +19,6 @@ NUM_CLIENTS = 10
 BATCH_SIZE = 32
 
 
-# Here, we are literally just confirming we have dependencies installed.
-def method1():
-    print(
-        f"Training on {DEVICE} using PyTorch {torch.__version__} and Flower {fl.__version__}"
-    )
-    disable_progress_bar()
-
-
 # In this method, we consider the CIFAR-10 database that we'll be working with.
 # It can be used to train nets to classify 10 different types of image. We begin by partitioning
 # the dataset, to pretend that we are 10 different clients all in the same federation.
