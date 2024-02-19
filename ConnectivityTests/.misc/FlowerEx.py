@@ -7,7 +7,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as transforms
-from datasets.utils.logging import disable_progress_bar
 from torch.utils.data import DataLoader
 
 import flwr as fl
