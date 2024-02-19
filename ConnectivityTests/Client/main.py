@@ -1,12 +1,9 @@
+from Utils.Net import *
+from Utils.Dataset import load_datasets
+from Client.CliUtils import *
 import flwr as fl
-from your_module_containing_FlowerClient import mk_client
 
-from ConnectivityTests.Utils.Net import *
-from ConnectivityTests.Client.CliUtils import *
-from ConnectivityTests.Client.CliUtils import *
-
-
-net = YourNeuralNetwork()
+net = Net()
 trainloader, valloader, _ = load_datasets()
 client = mk_client(net, trainloader, valloader)
 
