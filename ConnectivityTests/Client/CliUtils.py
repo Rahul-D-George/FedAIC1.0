@@ -25,4 +25,4 @@ class FlowerClient(fl.client.NumPyClient):
 
 
 def mk_client(net, trainloader, valloader) -> FlowerClient:
-    return FlowerClient(net, trainloader, valloader).to_client()
+    return FlowerClient(net, trainloader, valloader)

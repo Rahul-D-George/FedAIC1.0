@@ -18,17 +18,17 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
 
 strategy = fl.server.strategy.FedAvg(
-    fraction_fit=1.0,
+    fraction_fit=0.3,
     fraction_evaluate=0.5,
-    min_fit_clients=10,
-    min_evaluate_clients=5,
-    min_available_clients=10,
+    min_fit_clients=1,
+    min_evaluate_clients=1,
+    min_available_clients=1,
     evaluate_metrics_aggregation_fn=weighted_average,
     initial_parameters=fl.common.ndarrays_to_parameters(get_parameters(Net()))
 )
 
 fl.server.start_server(
-    # server_address="apollo.doc.ic.ac.uk:6296",
+    # server_address="apollo.doc.ic.ac.uk:6296", EXCLUDED FOR NOW BUT VERY IMPORTANT
     config=fl.server.ServerConfig(num_rounds=3),
     strategy=strategy
 )
