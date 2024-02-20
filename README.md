@@ -12,6 +12,32 @@ Here, we briefly outline the structure of the repository. Feel free to get in to
 
 __*Note:*__ _The above cannot be run until I have access to the Apollo machine._
 
+# How to run
+In order to run the code, you will first need to clone the repository, and install the following dependencies from the commandline, via `pip`
+```bash
+pip install matplotlib
+pip install numpy 
+pip install torch
+pip install torchvision
+pip install flwr
+pip install flwr_datasets
+```
+
+Following this, execution depends on whether you are on the server or client side. The server side code is to be run on Imperial Apollo, and the client side code is to be run on your local machine. 
+
+_**Note crucially that the server side will ONLY be able to run on Imperial's Apollo server. In order to configure this to run on your own machine, change the `server_address` parameter of both the client and the server to your own (this can be found by running `ifconfig` on a Linux machine, and then choosing an available port).**_
+
+On the server-side, simply navigate to the Server directory and run the following command from cmd:
+```bash
+python .\main.py
+```
+The server will remain on until federated learning has occured for the number of epochs specified in the `main.py` file. On the client side, navigate to the Client directory and run the following command from cmd, and for the number of clients you wish to run:
+
+If you are running as a client, navigate to the Client directory and run the following command from cmd:
+```bash
+python .\main.py
+```
+
 # Dependencies & Useful Links
 ### Dependencies
 - __Flower__: [Federated Learning Framework.][2]
