@@ -7,7 +7,7 @@ Here, we briefly outline the structure of the repository. Feel free to get in to
 - `ConnectivityTests`: Pre-requisites exercises and other miscellenea to ensure connection with Apollo.
   - `Client`: Client-side code to be run on local machines.
   - `Server`: Server-side code to be ran on Apollo.
-  - `Utils`: Useful code methods.
+  - `Utils`: Useful code methods, including getting and setting parameters, and ML code.
   - `.misc`: Preparatory stuff (_has no practical purpose anymore_).
 
 __*Note:*__ _The above cannot be run until I have access to the Apollo machine._
