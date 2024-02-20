@@ -28,7 +28,7 @@ strategy = fl.server.strategy.FedAvg(
 )
 
 fl.server.start_server(
-    # server_address="apollo.doc.ic.ac.uk:6296", EXCLUDED FOR NOW BUT VERY IMPORTANT
+    server_address = "apollo.doc.ic.ac.uk:6296",
     config=fl.server.ServerConfig(num_rounds=3),
     strategy=strategy
 )

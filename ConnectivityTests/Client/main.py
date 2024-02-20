@@ -7,5 +7,5 @@ trainloader, valloader, _ = load_datasets()
 client = mk_client(net, trainloader, valloader)
 
 # Connect to the Flower server
-server_address = "192.168.1.106:8080" # PLACEHOLDER USED DURING TESTING
+server_address = "apollo.doc.ic.ac.uk:6296"
 fl.client.start_numpy_client(server_address=server_address, client=client)
