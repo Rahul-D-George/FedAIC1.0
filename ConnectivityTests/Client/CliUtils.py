@@ -1,6 +1,6 @@
 import flwr as fl
-from Utils.Net import *
-from Utils.FedParams import *
+from ConnectivityTests.Utils.Net import *
+from ConnectivityTests.Utils.FedParams import *
 
 
 class FlowerClient(fl.client.NumPyClient):
