@@ -13,7 +13,9 @@ Here, we briefly outline the structure of the repository. Feel free to get in to
 __*Note:*__ _The above cannot be run until I have access to the Apollo machine._
 
 # How to run
-In order to run the code, you will first need to clone the repository, and install the following dependencies from the commandline, via `pip`
+
+### Pre-Requisites
+In order to run the code, you will first need to clone the repository, and install the following dependencies from the commandline, via `pip`:
 ```bash
 pip install matplotlib
 pip install numpy 
@@ -22,10 +24,15 @@ pip install torchvision
 pip install flwr
 pip install flwr_datasets
 ```
+### Server Information
 
-Following this, execution depends on whether you are on the server or client side. The server side code is to be run on Imperial Apollo, and the client side code is to be run on your local machine. 
+Execution depends on whether you are on the server or client side. The server side code is to be run on Imperial Apollo, and the client side code is to be run on your local machine.
 
 _**Note crucially that the server side will ONLY be able to run on Imperial's Apollo server. In order to configure this to run on your own machine, change the `server_address` parameter of both the client and the server to your own (this can be found by running `ifconfig` on a Linux machine, and then choosing an available port).**_
+
+### Connectivity Tests
+
+Before any sort of execution can occur, first navigate to the `ConnectivityTests` directory.
 
 On the server-side, simply navigate to the Server directory and run the following command from cmd:
 ```bash
