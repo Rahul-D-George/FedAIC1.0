@@ -34,13 +34,13 @@ _**Note crucially that the server side will ONLY be able to run on Imperial's Ap
 
 Before any sort of execution can occur, first navigate to the `ConnectivityTests` directory.
 
-On the server-side, simply navigate to the Server directory and run the following command from cmd:
+On the server-side, simply navigate to the `Server` directory and run the following command from cmd:
 ```bash
 python .\main.py
 ```
 The server will remain on until federated learning has occured for the number of epochs specified in the `main.py` file. On the client side, navigate to the Client directory and run the following command from cmd, and for the number of clients you wish to run:
 
-If you are running as a client, navigate to the Client directory and run the following command from cmd:
+If you are running as a client, navigate to the `Client` directory and run the following command from cmd:
 ```bash
 python .\main.py
 ```
