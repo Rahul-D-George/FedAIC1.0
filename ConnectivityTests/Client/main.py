@@ -1,6 +1,5 @@
-from Utils.Dataset import load_datasets
-from Client.CliUtils import *
-import flwr as fl
+from ConnectivityTests.Utils.Dataset import load_datasets
+from ConnectivityTests.Client.CliUtils import *
 
 net = Net()
 trainloader, valloader, _ = load_datasets()
