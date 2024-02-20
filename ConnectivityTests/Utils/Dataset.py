@@ -1,20 +1,10 @@
-from collections import OrderedDict
-from typing import List, Tuple
-
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import torchvision.transforms as transforms
-from datasets.utils.logging import disable_progress_bar
 from torch.utils.data import DataLoader
 
-import flwr as fl
-from flwr.common import Metrics
 from flwr_datasets import FederatedDataset
 
 BATCH_SIZE = 32
+
 
 def load_datasets():
     fds = FederatedDataset(dataset="cifar10", partitioners={"train": 1})
