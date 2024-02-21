@@ -18,6 +18,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     examples = [num_examples for num_examples, _ in metrics]
     return {"accuracy": sum(accuracies) / sum(examples)}
 
+
 while True:
     net = Net()
     c_dir = os.path.dirname(__file__)
@@ -28,7 +29,7 @@ while True:
         torch.save(net.state_dict(), latest_params)
         parameters = fl.common.ndarrays_to_parameters(get_parameters(net))
     else:
-        print("Loading pre-trained model" )
+        print("Loading pre-trained model")
         state_dict = torch.load(latest_params)
         net.load_state_dict(state_dict)
         state_dict_ndarrays = [v.cpu().numpy() for v in net.state_dict().values()]
@@ -37,12 +38,11 @@ while True:
 
     class SaveModelStrategy(fl.server.strategy.FedAvg):
         def aggregate_fit(
-            self,
-            server_round: int,
-            results: List[Tuple[fl.server.client_proxy.ClientProxy, fl.common.FitRes]],
-            failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]],
+                self,
+                server_round: int,
+                results: List[Tuple[fl.server.client_proxy.ClientProxy, fl.common.FitRes]],
+                failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]],
         ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
-
             aggregated_parameters, aggregated_metrics = super().aggregate_fit(server_round, results, failures)
 
             if aggregated_parameters is not None:
@@ -70,7 +70,7 @@ while True:
     )
 
     fl.server.start_server(
-        server_address="192.168.1.106:8080",
+        server_address="apollo.doc.ic.ac.uk:6296",
         config=fl.server.ServerConfig(num_rounds=3),
         strategy=strategy
     )

@@ -7,7 +7,7 @@ trainloader, valloader, _ = load_datasets()
 client = mk_client(net, trainloader, valloader)
 
 # Connect to the Flower server
-server_address = "192.168.1.106:8080"
+server_address = "apollo.doc.ic.ac.uk:6296"
 
 while True:
     try:
