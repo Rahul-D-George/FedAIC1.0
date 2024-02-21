@@ -1,5 +1,4 @@
-# Code to be ran on Imperial Apollo server.
-
+# Various imports.
 import flwr as fl
 from flwr.common import Metrics, FitRes, Parameters, Scalar
 from typing import List, Tuple, Dict, Optional, Union
@@ -9,45 +8,40 @@ import torch
 import numpy as np
 from flwr.server.client_proxy import ClientProxy
 
+# Add parent directory to path.
 import sys
 from pathlib import Path
 parent_dir = str(Path(__file__).resolve().parent.parent)
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
+# Custom imports.
 from ConnectivityTests.Utils.Net import Net
 from ConnectivityTests.Utils.FedParams import get_parameters
 
 
+# Custom method to evaluate the aggregated metrics.
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
     examples = [num_examples for num_examples, _ in metrics]
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 
+# Main method.
+# To explain what I'm doing here, please see phase-level comments below.
 while True:
-    net = Net()
 
+    # We begin by initialising a new neural network - the only reason we do this is to get the initial parameters
+    # which the server will use to initialise it's global model. These are converted to a format that flwr can use.
+    net = Net()
     parameters = fl.common.ndarrays_to_parameters(get_parameters(net))
 
-    # Deprecated code which was used to save model results.
-
-    # c_dir = os.path.dirname(__file__)
-    # current_params = "model_params.pth"
-    # latest_params = os.path.join(c_dir, current_params)
-
-    # if not os.path.exists(latest_params):
-    #     torch.save(net.state_dict(), latest_params)
-    #     parameters = fl.common.ndarrays_to_parameters(get_parameters(net))
-    # else:
-    #     print("Loading pre-trained model")
-    #     state_dict = torch.load(latest_params)
-    #     net.load_state_dict(state_dict)
-    #     state_dict_ndarrays = [v.cpu().numpy() for v in net.state_dict().values()]
-    #     parameters = fl.common.ndarrays_to_parameters(state_dict_ndarrays)
-
+    # We then produce a date string - this will be used to save any models that we want to keep, as well as
+    # the log file for this particular training run. It ensures that we can uniquely identify the files.
     date_string = time.strftime("%Y%m%d-%H%M%S")
 
+    # This is the custom strategy that we use to train the model. It is a subclass of the FedAvg strategy, but
+    # the only real difference is hat in the very last round, we save the model to a file.
     class SaveModelStrategy(fl.server.strategy.FedAvg):
         def aggregate_fit(
                 self,
@@ -57,20 +51,20 @@ while True:
         ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
             aggregated_parameters, aggregated_metrics = super().aggregate_fit(server_round, results, failures)
 
-            if aggregated_parameters is not None:
-                # print(f"Saving aggregated_parameters...")
-
+            # If we are in the last round, we save the model to a file.
+            # This is done by converting the parameters back to a state_dict, and then saving that state_dict to a file.
+            if aggregated_parameters is not None and server_round == 99:
                 aggregated_ndarrays: List[np.ndarray] = fl.common.parameters_to_ndarrays(aggregated_parameters)
-
                 params_dict = zip(net.state_dict().keys(), aggregated_ndarrays)
                 state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
                 net.load_state_dict(state_dict, strict=True)
-
-                if server_round == 100:
-                    torch.save(net.state_dict(), f"final_params_{date_string}.pth")
+                torch.save(net.state_dict(), f"final_params_{date_string}.pth")
 
             return aggregated_parameters, aggregated_metrics
 
+    # To briefly explain, we have set our fraction_fit and fraction_evaluate to 1, to ensure that every client
+    # is used for both training and evaluation. We have set the minimum number of clients to 2, to ensure that
+    # we have enough clients to train and evaluate (in other words, we wait for both hospitals before we do anything).
     strategy = SaveModelStrategy(
         fraction_fit=1,
         fraction_evaluate=1,
@@ -81,10 +75,13 @@ while True:
         initial_parameters=parameters
     )
 
+    # This logger simply saves the logs to a file, with the date string as the identifier.
     fl.common.logger.configure(identifier=f"training_logs_{date_string}", filename=f"log_{date_string}.txt")
 
+    # We then start the server, using the strategy we have defined above.
+    server_address = "apollo.doc.ic.ac.uk:6296"
     fl.server.start_server(
-        server_address="apollo.doc.ic.ac.uk:6296",
+        server_address=server_address,
         config=fl.server.ServerConfig(num_rounds=100),
         strategy=strategy
     )
