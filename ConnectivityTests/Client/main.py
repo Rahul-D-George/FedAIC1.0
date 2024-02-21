@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+# Add the parent directory to sys.path to allow imports from there
+parent_dir = str(Path(__file__).resolve().parent.parent)
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
+
 from ConnectivityTests.Utils.Dataset import load_datasets
 from ConnectivityTests.Client.CliUtils import *
 import torch

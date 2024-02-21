@@ -9,6 +9,12 @@ import torch
 import numpy as np
 from flwr.server.client_proxy import ClientProxy
 
+import sys
+from pathlib import Path
+parent_dir = str(Path(__file__).resolve().parent.parent)
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
+
 from ConnectivityTests.Utils.Net import Net
 from ConnectivityTests.Utils.FedParams import get_parameters
 
