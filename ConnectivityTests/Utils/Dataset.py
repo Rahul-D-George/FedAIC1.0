@@ -1,11 +1,14 @@
+# Various imports.
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-
 from flwr_datasets import FederatedDataset
 
+# The batch size for the training and validation datasets.
 BATCH_SIZE = 32
 
 
+# This method is used to load the training, validation and test datasets.
+# The code is lifted entirely from the flwr_datasets library - not my own.
 def load_datasets():
     fds = FederatedDataset(dataset="cifar10", partitioners={"train": 1})
 

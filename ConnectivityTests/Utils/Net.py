@@ -1,11 +1,16 @@
+# Various imports.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# Device type to be used for training.
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
+# Neural network class.
+# The methods and structure here are taken from the flwr tutorial on the CIFAR-10 dataset.
 class Net(nn.Module):
+
     def __init__(self) -> None:
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
