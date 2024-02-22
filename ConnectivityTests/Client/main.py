@@ -10,8 +10,8 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 # Custom imports.
-from ConnectivityTests.Utils.Dataset import load_datasets
-from ConnectivityTests.Client.CliUtils import *
+from Utils.Dataset import load_datasets
+from Client.CliUtils import *
 
 # We begin by initialising the neural network that the client wants to train.
 net = Net()
@@ -25,7 +25,7 @@ client = mk_client(net, trainloader, valloader)
 # We finally start the client, and connect it to the server.
 # This should enable federated learning to begin.
 server_address = "apollo.doc.ic.ac.uk:6296"
-fl.client.start_numpy_client(server_address=server_address, client=client)
+fl.client.start_client(server_address=server_address, client=client.to_client())
 
 # Once the client has finished training, we save the final model to a file.
 model_parameters = net.state_dict()

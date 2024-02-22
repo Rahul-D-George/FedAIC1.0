@@ -9,8 +9,8 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 # Custom imports.
-from ConnectivityTests.Utils.Net import *
-from ConnectivityTests.Utils.FedParams import *
+from Utils.Net import *
+from Utils.FedParams import *
 
 
 # Custom client class.
@@ -46,7 +46,7 @@ class FlowerClient(fl.client.NumPyClient):
         PLoss, PAccuracy = test(self.net, self.valloader)
         set_parameters(self.net, parameters)
         FLoss, FAccuracy = test(self.net, self.valloader)
-        print(f"ROUND: {self.round} | LOCAL LOSS & ACCURACY : {float(PLoss)}, {float(PAccuracy) * 100} "
+        print(f"ROUND: {self.round} | LOCAL LOSS & ACCURACY : {float(PLoss)}, {float(PAccuracy) * 100}% "
               f"| GLOBAL LOSS & ACCURACY: {float(FLoss)}, {float(FAccuracy) * 100}%\n", flush=True)
         return float(FLoss), len(self.valloader), {"accuracy": float(FAccuracy)}
 

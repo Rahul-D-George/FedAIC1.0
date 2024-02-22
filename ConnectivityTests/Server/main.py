@@ -16,8 +16,8 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 # Custom imports.
-from ConnectivityTests.Utils.Net import Net
-from ConnectivityTests.Utils.FedParams import get_parameters
+from Utils.Net import Net
+from Utils.FedParams import get_parameters
 
 
 # Custom method to evaluate the aggregated metrics.
