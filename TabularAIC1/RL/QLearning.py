@@ -19,13 +19,6 @@ EPISODES = df.episode.unique()
 STATES = df.state.unique()
 NON_TERMINAL_STATES = df[~df['action'].isnull()]['state'].unique()
 
-# Initialising Qd dictionary - this will be used to store the top 3 Q value changes for each state-action pair.
-Qd = {}
-for s in STATES:
-    Qd[s] = {}
-    for a in ACTION_SPACE:
-        Qd[s][a] = {1: [0, 0], 2: [0, 0], 3: [0, 0]}
-
 # Initialising Q dictionary - this will be used to store the Q values for each state-action pair.
 Q = {}
 for s in STATES:
@@ -76,28 +69,6 @@ for it in range(n_episodes):
         oldQ = (Q[s][a])
         Q[s][a] = Q[s][a] + ALPHA * (r + GAMMA * maxQ - Q[s][a])
         newQ = (Q[s][a])
-        diffQ = newQ - oldQ
-
-        if diffQ > Qd[s][a][1][1]:
-            Qd[s][a][3][1] = Qd[s][a][2][1]
-            Qd[s][a][3][0] = Qd[s][a][2][0]
-
-            Qd[s][a][2][1] = Qd[s][a][1][1]
-            Qd[s][a][2][0] = Qd[s][a][1][0]
-
-            Qd[s][a][1][1] = diffQ
-            Qd[s][a][1][0] = ep
-
-        elif diffQ > Qd[s][a][2][1]:
-            Qd[s][a][3][1] = Qd[s][a][2][1]
-            Qd[s][a][3][0] = Qd[s][a][2][0]
-
-            Qd[s][a][2][1] = diffQ
-            Qd[s][a][2][0] = ep
-
-        elif diffQ > Qd[s][a][3][1]:
-            Qd[s][a][3][1] = diffQ
-            Qd[s][a][3][0] = ep
 
         update_counts[s] = update_counts.get(s, 0) + 1
 
