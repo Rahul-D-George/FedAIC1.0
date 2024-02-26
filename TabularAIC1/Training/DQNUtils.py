@@ -1,7 +1,5 @@
-import gym
 import math
 import random
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -9,6 +7,7 @@ import torch.nn.functional as F
 from collections import namedtuple, deque
 
 Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'))
+
 
 class ReplayMemory(object):
     def __init__(self, capacity):
@@ -88,4 +87,8 @@ class DQNAgent:
 
         expected_state_action_values = (next_state_values * self.gamma) + reward_batch
 
-        loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze)
+        loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
