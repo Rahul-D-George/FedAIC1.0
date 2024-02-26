@@ -3,3 +3,5 @@
 *.pyc
 *.pyo
 fedaic_env
+TabularAIC1/Datasets/MIMICiii.csv
+TabularAIC1/Datasets/MIMICtable_261219.csv
