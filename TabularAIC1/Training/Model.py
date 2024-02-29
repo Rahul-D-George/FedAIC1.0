@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import copy
-import torch.optim
 
 from DQNUtils import *
 
@@ -13,16 +12,13 @@ STATES = df.state.unique()
 ACTION_SPACE = df[~df['action'].isnull()]['action'].unique()
 
 N_ITERATIONS = 1000
-BATCH_SIZE = 128
+BATCH_SIZE = 1
 GAMMA = 0.995
 
-policy = offlineDQN(1, 25)
+policy = offlineDQN(1, 25, layers=[])
 target = copy.deepcopy(policy)
 
 optimizer = torch.optim.Adam(policy.parameters(), lr=0.01)
-
-print(len(df))
-
 
 # Main Q learning loop.
 for i in range(N_ITERATIONS):
@@ -38,12 +34,15 @@ for i in range(N_ITERATIONS):
             = (experience['state'], experience['action'], experience['reward'],
                experience['next_state'], experience['done'])
 
-        predicted.append(policy.compute_predicted_qs(state))
-        targets.append(target.compute_target_qs(reward, next_state, done, GAMMA))
-        print("EXPERIENCE SAMPLED")
+        action_tensor = policy.compute_predicted_qs(state)
+        rel_action = action_tensor[int(action)-1]
+        predicted.append(rel_action)
 
-    policy.back_prop(predicted, targets)
+        targets.append(target.compute_target_qs(reward, next_state, done, GAMMA))
+
+    predicted_tensor = torch.tensor(predicted, dtype=torch.float32, requires_grad=True)
+    targets_tensor = torch.tensor(targets, dtype=torch.float32, requires_grad=True)
+
+    policy.back_prop(predicted_tensor, targets_tensor)
 
     optimizer.step()
-
-    print("ITER DONE")

@@ -11,7 +11,12 @@ class offlineDQN(nn.Module):
     def __init__(self, input_dim, output_dim, layers=BASE_LAYERS):
         super().__init__()
 
+        if len(layers) == 0:
+            layers.append(output_dim)
+            layers.append(input_dim)
+
         nn_layers = [nn.Linear(input_dim, layers[0])]
+
 
         for i in range(1, len(layers)):
             in_features = layers[i-1]
@@ -40,11 +45,13 @@ class offlineDQN(nn.Module):
                 break
             x = F.relu(layer(x))
 
+        print(x)
+
         return x
 
     # Backward Propagation
     def back_prop(self, target_qs, predicted_qs):
-        loss = F.mse_loss(torch.tensor(target_qs), torch.tensor(predicted_qs))
+        loss = F.mse_loss(target_qs, predicted_qs)
         loss.backward()
 
     # Compute target Qs
