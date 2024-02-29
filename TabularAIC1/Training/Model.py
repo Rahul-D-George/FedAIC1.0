@@ -7,7 +7,7 @@ import torch.optim
 
 from DQNUtils import *
 
-df = pd.read_csv('Preprocessing/df_history.csv')
+df = pd.read_csv('../Preprocessing/df_final.csv')
 EPISODES = df.episode.unique()
 STATES = df.state.unique()
 ACTION_SPACE = df[~df['action'].isnull()]['action'].unique()
@@ -19,12 +19,17 @@ GAMMA = 0.995
 policy = offlineDQN(1, 25)
 target = copy.deepcopy(policy)
 
+optimizer = torch.optim.Adam(policy.parameters(), lr=0.01)
+
+print(len(df))
+
+
 # Main Q learning loop.
 for i in range(N_ITERATIONS):
 
-    optimizer = torch.optim.Adam(policy.parameters(), lr=0.01)
+    optimizer.zero_grad()
 
-    batch = df.sample(n=BATCH_SIZE)
+    batch = df.sample(BATCH_SIZE)
 
     predicted, targets = [], []
 
@@ -35,5 +40,10 @@ for i in range(N_ITERATIONS):
 
         predicted.append(policy.compute_predicted_qs(state))
         targets.append(target.compute_target_qs(reward, next_state, done, GAMMA))
+        print("EXPERIENCE SAMPLED")
 
     policy.back_prop(predicted, targets)
+
+    optimizer.step()
+
+    print("ITER DONE")
