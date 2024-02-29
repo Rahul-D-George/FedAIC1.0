@@ -1,8 +1,8 @@
 def values_to_tune():
-    N_ITERATIONS = 1000
-    BATCH_SIZE = 1
+    N_ITERATIONS = 10000
+    BATCH_SIZE = 256
     GAMMA = 0.995
-    LAYERS = []
+    LAYERS = [256, 128, 64]
     ADAM_LR = 0.01
-    TARGET_FREQ = 100
+    TARGET_FREQ = 1000
     return N_ITERATIONS, BATCH_SIZE, GAMMA, LAYERS, ADAM_LR, TARGET_FREQ

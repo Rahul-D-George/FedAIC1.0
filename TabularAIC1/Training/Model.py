@@ -4,44 +4,62 @@ import copy
 from DQNUtils import *
 from Tuner import values_to_tune
 
+
+def to_one_hot(num):
+
+    one_hot = torch.zeros(754)
+
+    intn = int(num)
+
+    if intn == 751:
+        one_hot[750] = 1
+    elif intn == 752:
+        one_hot[751] = 1
+    elif intn == 777:
+        one_hot[752] = 1
+    elif intn < 751:
+        one_hot[intn] = 1
+    else:
+        one_hot[753] = 1
+
+    return one_hot
+
+
 df = pd.read_csv('../Preprocessing/df_final.csv')
-EPISODES = df.episode.unique()
-STATES = df.state.unique()
-ACTION_SPACE = df[~df['action'].isnull()]['action'].unique()
 
 N_ITERATIONS, BATCH_SIZE, GAMMA, LAYERS, ADAM_LR, TARGET_FREQ = values_to_tune()
 
-policy = offlineDQN(1, 25, layers=LAYERS)
-target = copy.deepcopy(policy)
+policy = offlineDQN(754, 25, layers=LAYERS)
+target = offlineDQN(754, 25, layers=LAYERS)
+target.load_state_dict(policy.state_dict())
 
-optimizer = torch.optim.Adam(policy.parameters(), lr=ADAM_LR)
+batch = df.sample(BATCH_SIZE)
 
 # Main Q learning loop.
 for i in range(N_ITERATIONS):
 
-    optimizer.zero_grad()
-
-    if (i+1) % TARGET_FREQ == 0:
+    if i % TARGET_FREQ == 0:
         target.load_state_dict(policy.state_dict())
 
-    batch = df.sample(BATCH_SIZE)
+    states = torch.stack(batch['state'].apply(to_one_hot).tolist())
+    next_states = torch.stack(batch['next_state'].apply(to_one_hot).tolist())
+    actions = torch.tensor(batch['action'].values, dtype=torch.long) - 1
+    rewards = torch.tensor(batch['reward'].values, dtype=torch.float)
+    dones = torch.tensor(batch['done'].values, dtype=torch.float)
 
-    predicted, targets = [], []
+    predicted_qs = policy(states)
+    next_state_qs = target(next_states).detach()
 
-    for index, experience in batch.iterrows():
-        state, action, reward, next_state, done \
-            = (experience['state'], experience['action'], experience['reward'],
-               experience['next_state'], experience['done'])
+    predicted_qs = predicted_qs.gather(1, actions.unsqueeze(-1)).squeeze(-1)
 
-        action_tensor = policy.compute_predicted_qs(state)
-        rel_action = action_tensor[int(action)-1]
-        predicted.append(rel_action)
+    targets = rewards + GAMMA * next_state_qs.max(1)[0] * (1 - dones)
 
-        targets.append(target.compute_target_qs(reward, next_state, done, GAMMA))
+    policy.optim.zero_grad()
+    loss = F.mse_loss(predicted_qs, targets)
+    loss.backward()
+    policy.optim.step()
 
-    predicted_tensor = torch.tensor(predicted, dtype=torch.float32, requires_grad=True)
-    targets_tensor = torch.tensor(targets, dtype=torch.float32, requires_grad=True)
+    if (i + 1) % 10 == 0:
+        print(f'Iteration {i + 1}')
+        print(f"Loss = {loss}")
 
-    policy.back_prop(predicted_tensor, targets_tensor)
-
-    optimizer.step()
