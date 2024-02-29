@@ -1,5 +1,5 @@
 import pandas as pd
-import copy
+import datetime
 
 from DQNUtils import *
 from Tuner import values_to_tune
@@ -59,7 +59,8 @@ for i in range(N_ITERATIONS):
     loss.backward()
     policy.optim.step()
 
-    if (i + 1) % 10 == 0:
+    if (i + 1) % 100 == 0:
         print(f'Iteration {i + 1}')
         print(f"Loss = {loss}")
 
+torch.save(policy.state_dict(), f"policy_{datetime.datetime.now().strftime('%Y%m%d-%H')}")
