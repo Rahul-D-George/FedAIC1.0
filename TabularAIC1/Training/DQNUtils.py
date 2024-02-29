@@ -3,20 +3,18 @@ import torch.nn.functional as F
 import torch.optim
 
 
-BASE_LAYERS = [128]
-
-
 # Define network used by policy and target
 class offlineDQN(nn.Module):
-    def __init__(self, input_dim, output_dim, layers=BASE_LAYERS):
+    def __init__(self, input_dim, output_dim, layers=None):
         super().__init__()
 
+        if layers is None:
+            layers = [128]
         if len(layers) == 0:
             layers.append(output_dim)
             layers.append(input_dim)
 
         nn_layers = [nn.Linear(input_dim, layers[0])]
-
 
         for i in range(1, len(layers)):
             in_features = layers[i-1]
@@ -26,13 +24,6 @@ class offlineDQN(nn.Module):
         nn_layers.append(nn.Linear(layers[-1], output_dim))
 
         self.layers = nn.ModuleList(nn_layers)
-
-    def get_parameters(self):
-        return self.layers
-
-    def set_parameters(self, parameters):
-        self.layers = parameters
-
 
     # Forward Propagation
     def forward(self, state_num):
@@ -44,8 +35,6 @@ class offlineDQN(nn.Module):
                 x = layer(x)
                 break
             x = F.relu(layer(x))
-
-        print(x)
 
         return x
 

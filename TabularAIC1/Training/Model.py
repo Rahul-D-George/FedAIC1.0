@@ -1,29 +1,28 @@
-import pickle
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import copy
 
 from DQNUtils import *
+from Tuner import values_to_tune
 
 df = pd.read_csv('../Preprocessing/df_final.csv')
 EPISODES = df.episode.unique()
 STATES = df.state.unique()
 ACTION_SPACE = df[~df['action'].isnull()]['action'].unique()
 
-N_ITERATIONS = 1000
-BATCH_SIZE = 1
-GAMMA = 0.995
+N_ITERATIONS, BATCH_SIZE, GAMMA, LAYERS, ADAM_LR, TARGET_FREQ = values_to_tune()
 
-policy = offlineDQN(1, 25, layers=[])
+policy = offlineDQN(1, 25, layers=LAYERS)
 target = copy.deepcopy(policy)
 
-optimizer = torch.optim.Adam(policy.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(policy.parameters(), lr=ADAM_LR)
 
 # Main Q learning loop.
 for i in range(N_ITERATIONS):
 
     optimizer.zero_grad()
+
+    if (i+1) % TARGET_FREQ == 0:
+        target.load_state_dict(policy.state_dict())
 
     batch = df.sample(BATCH_SIZE)
 
